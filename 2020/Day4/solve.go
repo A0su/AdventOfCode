@@ -14,8 +14,53 @@ func errorCheck(e error) {
 	}
 }
 
+func strVal(inputStr string, accepted []string) (bool) {
+  var in bool
+  for _,ele := range inputStr {
+    for _,comp := range accepted {
+      if string(ele) == comp {
+        in = true
+        break
+      } 
+    }
+    if !in { 
+      return false
+    }
+    in = false
+  }
+  return true 
+}
+
+func heightVal(inputStr string) (bool) {
+  var magn, unit string
+  var sb, sb2 strings.Builder
+  sb.WriteString(magn)
+  sb2.WriteString(unit)
+  for _,ele := range inputStr {
+    if ele < 58 {
+      sb.WriteRune(ele)
+    } else {
+      sb2.WriteRune(ele)
+    }
+  }
+  if  sb2.String() == "cm" {
+    val, err := strconv.Atoi(sb.String())
+    errorCheck(err)
+    if val > 193 || val < 150 {
+      return false
+    }
+  } else {
+    val, err := strconv.Atoi(sb.String())
+    errorCheck(err)
+    if val > 76 || val < 59 {
+      return false
+    }
+  }
+  return true
+}
+
 func validate(passport []string) (bool) {
-	accepted := []string{"blu","brn","gry","grn","hzl","oth"}
+  accepted := []string{"amb","blu","brn","gry","grn","hzl","oth"}
 	hairValidate := []string{"0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f"}
 	m := map[string]bool{
 		"byr":false,
@@ -32,20 +77,34 @@ func validate(passport []string) (bool) {
 			if substr[0:3] != "cid" {
 				switch substr[0:3] {
 					case "byr":
-
+            val, err := strconv.Atoi(substr[4:])
+            errorCheck(err)
+            if val >= 1920 && val <= 2002 { 
+              m["byr"] = true
+            }
 					case "iyr":
-
+            val, err := strconv.Atoi(substr[4:])
+            errorCheck(err)
+            if val >= 2010 && val <= 2020 {
+              m["iyr"] = true
+            }	
 					case "eyr":
-
+            val, err := strconv.Atoi(substr[4:])
+            errorCheck(err)
+            if val >= 2020 && val <= 2030 {
+              m["eyr"] = true
+            }	
 					case "hgt":
-
+            if heightVal(substr[4:]) {
+              m["hgt"] =  true
+            }
 					case "hcl":
 						param := substr[4:]
 						if len(param) == 7 {
-							if param[0] == "#" {
-								for _,ele := range param[1:] {
-									if 
-								}
+							if string(param[0]) == "#" {
+                if strVal(substr[5:],hairValidate) {
+                  m["hcl"] = true
+                }                
 							}
 						}
 					case "ecl":
@@ -64,7 +123,7 @@ func validate(passport []string) (bool) {
 			}
 		}
 	}
-
+  fmt.Println(m)
 	for _,v := range m {
 		if !v {
 			return false
