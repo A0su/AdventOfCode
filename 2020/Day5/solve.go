@@ -55,7 +55,6 @@ func main() {
   scanner := bufio.NewScanner(f)
   for scanner.Scan() {
     curr := scanner.Text()
-    errorCheck(err)
     lines = append(lines,curr)
   }
 
