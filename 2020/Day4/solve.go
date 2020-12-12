@@ -77,34 +77,34 @@ func validate(passport []string) (bool) {
 			if substr[0:3] != "cid" {
 				switch substr[0:3] {
 					case "byr":
-            val, err := strconv.Atoi(substr[4:])
-            errorCheck(err)
-            if val >= 1920 && val <= 2002 { 
-              m["byr"] = true
-            }
+						val, err := strconv.Atoi(substr[4:])
+						errorCheck(err)
+						if val >= 1920 && val <= 2002 { 
+							m["byr"] = true
+						}
 					case "iyr":
-            val, err := strconv.Atoi(substr[4:])
-            errorCheck(err)
-            if val >= 2010 && val <= 2020 {
-              m["iyr"] = true
-            }	
+						val, err := strconv.Atoi(substr[4:])
+						errorCheck(err)
+						if val >= 2010 && val <= 2020 {
+							m["iyr"] = true
+						}	
 					case "eyr":
-            val, err := strconv.Atoi(substr[4:])
-            errorCheck(err)
-            if val >= 2020 && val <= 2030 {
-              m["eyr"] = true
-            }	
+						val, err := strconv.Atoi(substr[4:])
+						errorCheck(err)
+						if val >= 2020 && val <= 2030 {
+							m["eyr"] = true
+						}	
 					case "hgt":
-            if heightVal(substr[4:]) {
-              m["hgt"] =  true
-            }
+						if heightVal(substr[4:]) {
+							m["hgt"] =  true
+						}
 					case "hcl":
 						param := substr[4:]
 						if len(param) == 7 {
 							if string(param[0]) == "#" {
-                if strVal(substr[5:],hairValidate) {
-                  m["hcl"] = true
-                }                
+								if strVal(substr[5:],hairValidate) {
+									m["hcl"] = true
+								}                
 							}
 						}
 					case "ecl":
@@ -123,7 +123,6 @@ func validate(passport []string) (bool) {
 			}
 		}
 	}
-  fmt.Println(m)
 	for _,v := range m {
 		if !v {
 			return false
