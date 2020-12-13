@@ -28,15 +28,44 @@ func in(vals []int, PC int) bool {
 	return true
 }
 
-func main() {
+/*	Returns accumulator if finite execution	
+ * 	Else -1
+*/
+func execProg(program []Statement, insLength int) (int) {
+	var PC int = 0
+	var accumulator int = 0
 	var seenIns []int
+
+	for PC < insLength {
+		if !in(seenIns, PC) {
+			return -1
+		}
+		seenIns = append(seenIns, PC)
+		switch program[PC].ins {
+		case "acc":
+			accumulator += program[PC].offset
+			PC++
+		case "jmp":
+			PC += program[PC].offset
+		case "nop":
+			PC++
+		default:
+			panic("ERROR: Unknown instruction " + program[PC].ins)
+		}
+	}
+
+	return accumulator
+}
+
+
+func main() {
 	var val int
 	var ins string
 	var err error
-	var PC int = 0
+	var properAccumulator int
 	var insLength int = 0
-	var accumulator int = 0
 	var program []Statement
+	var mutate []Statement
 
 	f, err := os.Open("./input.txt")
 	errorCheck(err)
@@ -52,24 +81,24 @@ func main() {
 		insLength++
 	}
 
-	for PC < insLength {
-		if !in(seenIns, PC) {
-			fmt.Println("Preventing running ins twice")
-			break
-		}
-		seenIns = append(seenIns, PC)
-		switch program[PC].ins {
-		case "acc":
-			accumulator += program[PC].offset
-			PC++
-		case "jmp":
-			PC += program[PC].offset
-		case "nop":
-			PC++
-		default:
-			panic("ERROR: Unknown instruction " + ins)
+	//Run through all mutations of program
+	for idx,ele := range program {
+		if ele.ins == "nop" || ele.ins == "jmp" {
+			mutate = make([]Statement, insLength)
+			copy(mutate,program)
+			if ele.ins == "jmp" {
+				mutate[idx].ins = "nop"
+			} else {
+				mutate[idx].ins = "jmp"
+			}
+			if retVal := execProg(mutate,insLength); retVal != -1 {
+				properAccumulator = retVal
+				break
+			}
 		}
 	}
 
-	fmt.Printf("Value of accumulator: %d\n", accumulator)
+
+
+	fmt.Printf("Value of accumulator: %d\n", properAccumulator)
 }
